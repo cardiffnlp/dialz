@@ -24,7 +24,7 @@ Releases are hosted on `PyPI`_, and can be installed using `pip` as below:
    Home<self>
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Tutorials
 
    tutorials/basic_tutorial.ipynb
