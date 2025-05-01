@@ -18,6 +18,8 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
+    'nbsphinx',
+    'sphinx_copybutton'
 ]
 
 pygments_style = "sphinx"

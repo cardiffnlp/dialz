@@ -1,5 +1,5 @@
 score
-======
+==========
 
 .. automodule:: dialz.score
    :members:

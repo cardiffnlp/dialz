@@ -1,5 +1,5 @@
 visualize
-======
+==========
 
 .. automodule:: dialz.visualize
    :members:
