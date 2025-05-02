@@ -2,7 +2,7 @@ furo==2024.8.6
 gguf==0.14.0
 ipython
 langdetect==1.0.9
-nbsphinx
+myst-nb
 pandas==2.2.3
 python-dotenv==1.0.1
 scikit-learn==1.6.1

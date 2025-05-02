@@ -18,7 +18,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
-    'nbsphinx',
+    'myst_nb',
     'sphinx_copybutton'
 ]
 
@@ -27,6 +27,7 @@ pygments_style = "sphinx"
 templates_path = ['_templates']
 exclude_patterns = []
 
+nb_execution_mode = "off"
 
 autodoc_typehints = "none"
 
