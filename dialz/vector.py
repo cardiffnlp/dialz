@@ -30,6 +30,7 @@ class SteeringVector:
         cls,
         model: "PreTrainedModel | SteeringModel",
         dataset: list[DatasetEntry],
+        method: str = "pca",
         **kwargs,
     ) -> "SteeringVector":
         """
@@ -43,7 +44,7 @@ class SteeringVector:
                 max_batch_size (int, optional): The maximum batch size for training.
                     Defaults to 32. Try reducing this if you're running out of memory.
                 method (str, optional): The training method to use. Can be either
-                    "pca_diff" or "pca_center". Defaults to "pca_diff".
+                    "pca" or "pca_center". Defaults to "pca".
 
         Returns:
             SteeringVector: The trained vector.
@@ -56,6 +57,7 @@ class SteeringVector:
                 model,
                 tokenizer,
                 dataset,
+                method,
                 **kwargs,
             )
         return cls(model_type=model.config.model_type, directions=dirs)
@@ -187,7 +189,7 @@ def read_representations(
     inputs: list[DatasetEntry],
     hidden_layers: typing.Iterable[int] | None = None,
     batch_size: int = 32,
-    method: typing.Literal["pca_diff", "pca_center", "umap", "mean_diff"] = "pca_diff",
+    method: typing.Literal["pca", "pca_center", "umap", "mean_diff"] = "pca",
     transform_hiddens: (
         typing.Callable[[dict[int, np.ndarray]], dict[int, np.ndarray]] | None
     ) = None,
@@ -218,7 +220,7 @@ def read_representations(
         h = layer_hiddens[layer]
         assert h.shape[0] == len(inputs.entries) * 2
 
-        if method == "pca_diff":
+        if method == "pca":
             train = h[::2] - h[1::2]
         elif method == "pca_center":
             center = (h[::2] + h[1::2]) / 2
