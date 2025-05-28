@@ -57,7 +57,7 @@ class SteeringVector:
                 model,
                 tokenizer,
                 dataset,
-                method,
+                method=method,
                 **kwargs,
             )
         return cls(model_type=model.config.model_type, directions=dirs)
