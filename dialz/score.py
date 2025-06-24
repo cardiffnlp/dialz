@@ -16,22 +16,26 @@ def get_activation_score(
     scoring_method: str = "mean",  # 'mean', 'final_token', 'max_token', or 'median_token'
 ) -> float:
     """
-    Returns the activation score for the input_text by projecting hidden state(s)
-    onto the given control_vector direction(s) for the specified layer(s). If
-    multiple layers are provided, the activation scores are averaged.
+    Compute the activation score for input_text by projecting hidden states onto
+    the control_vector direction(s) at the specified layer(s).
 
     Scoring methods:
-        - 'mean': Average the dot products over all tokens.
-        - 'final_token': Use only the dot product of the final token.
-        - 'max_token': Use the maximum dot product value among all tokens.
-        - 'median_token': Use the median of the dot product values among all tokens.
+        - 'mean': Average dot products over all tokens.
+        - 'final_token': Dot product of the final token.
+        - 'max_token': Maximum dot product among tokens.
+        - 'median_token': Median dot product among tokens.
 
-    :param input_text: The input string to evaluate.
-    :param control_vector: A ControlVector containing direction(s) keyed by layer index.
-    :param layer_index: An int or a list of ints representing the layer(s) to use.
-                        If None, defaults to the last controlled layer in model.layer_ids.
-    :param scoring_method: A string specifying which scoring method to use.
-    :return: A single float representing the averaged activation score.
+    Args:
+        input_text (str): The input string to evaluate.
+        model (SteeringModel): The model to use for computing activations.
+        control_vector (SteeringVector): Contains direction(s) keyed by layer index.
+        layer_index (int or list[int], optional): Layer(s) to use. Defaults to last in model.layer_ids.
+        scoring_method (str): Scoring method to use.
+
+    Returns:
+        float: Averaged activation score across selected layers.
+        int: Number of tokens in the input.
+        list: Unaggregated dot product scores for each layer.
     """
     # 1) Reset the model to ensure no control is applied.
     model.reset()
@@ -97,6 +101,7 @@ def get_activation_score(
 
     # 10) For each layer, compute the activation score using the chosen scoring method.
     scores = []
+    unaggregated_scores = []
     for li in layers_to_use:
         if li not in hook_states:
             raise RuntimeError(
@@ -114,7 +119,7 @@ def get_activation_score(
 
         # Compute dot products for all tokens: shape [seq_len]
         dot_vals = hidden_states @ direction
-
+        token_length = dot_vals.shape[0]
         # Determine score based on the scoring_method.
         if scoring_method == "mean":
             # Average over all tokens.
@@ -130,9 +135,10 @@ def get_activation_score(
             score_tensor = dot_vals.median()
         else:
             raise ValueError(f"Unknown scoring_method: {scoring_method}")
-
+        unaggregated_score = dot_vals.cpu().detach().numpy()
+        unaggregated_scores.append(unaggregated_score)
         scores.append(score_tensor.item())
 
     # 11) Average the scores across the selected layers.
     avg_score = sum(scores) / len(scores)
-    return avg_score
+    return avg_score, token_length, unaggregated_scores
