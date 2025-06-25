@@ -4,6 +4,7 @@
 # Dialz: A Python Toolkit for Steering Vectors
 
 Docs: [https://cardiffnlp.github.io/dialz/](https://cardiffnlp.github.io/dialz/)
+
 Paper: [https://www.arxiv.org/abs/2505.06262](https://www.arxiv.org/abs/2505.06262)
 
 ## About
