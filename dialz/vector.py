@@ -477,6 +477,9 @@ class SteeringModule(torch.nn.Module):
         super().__init__()
         self.block: torch.nn.Module = block
         self.params: BlockControlParams = BlockControlParams.default()
+        
+        if hasattr(block, 'attention_type'):
+            self.attention_type = block.attention_type
 
     def set_control(self, params: BlockControlParams) -> None:
         self.params = params
@@ -533,10 +536,3 @@ class SteeringModule(torch.nn.Module):
             output = modified
 
         return output
-
-    def __getattr__(self, name: str):
-        # standard safety to avoid infinite recursion
-        if name in ('module',):
-            return super().__getattribute__(name)
-        # delegate everything else to the wrapped module
-        return getattr(self.module, name)
