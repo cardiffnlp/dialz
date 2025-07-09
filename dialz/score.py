@@ -14,7 +14,7 @@ def get_activation_score(
     control_vector: "SteeringVector",
     layer_index=None,  # can be int or list of ints
     scoring_method: str = "mean",  # 'mean', 'final_token', 'max_token', or 'median_token'
-) -> float:
+) -> tuple[float, int, list[float]]:
     """
     Compute the activation score for input_text by projecting hidden states onto
     the control_vector direction(s) at the specified layer(s).
@@ -32,10 +32,13 @@ def get_activation_score(
         layer_index (int or list[int], optional): Layer(s) to use. Defaults to last in model.layer_ids.
         scoring_method (str): Scoring method to use.
 
-    Returns:
-        float: Averaged activation score across selected layers.
-        int: Number of tokens in the input.
-        list: Unaggregated dot product scores for each layer.
+    :returns: A tuple containing:
+
+        - score: Averaged activation score across selected layers.
+
+        - token_len: Number of tokens in the input.
+        
+        - unaggregated_scores: Unaggregated dot product scores for each layer.
     """
     # 1) Reset the model to ensure no control is applied.
     model.reset()

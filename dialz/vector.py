@@ -534,3 +534,9 @@ class SteeringModule(torch.nn.Module):
 
         return output
 
+    def __getattr__(self, name: str):
+        # standard safety to avoid infinite recursion
+        if name in ('module',):
+            return super().__getattribute__(name)
+        # delegate everything else to the wrapped module
+        return getattr(self.module, name)
